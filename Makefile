@@ -8,3 +8,6 @@ debian-certs: debian-verify
 
 debian-to-android: debian-certs
 	./pemsToAndroid.sh stores/debiancacerts.bks "ca-certificates/mozilla/*.crt"
+
+debian-to-java: debian-certs
+	./pemsToAndroid.sh stores/debiancacerts.jks "ca-certificates/mozilla/*.crt"
