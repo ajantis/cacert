@@ -16,7 +16,7 @@ rm $certStore.txt
 
 certAliasNum=0
 
-for file in `dir -d $pemPath` ; do
+for file in `ls $pemPath` ; do
 	certAliasNum=$((certAliasNum+1))
 	keytool -importcert -v -trustcacerts -file "$file" -alias $certAliasNum -keystore "$certStore" -provider org.bouncycastle.jce.provider.BouncyCastleProvider -providerpath "libs/bcprov-jdk16-145.jar" -storetype BKS -storepass changeit -noprompt
 	keytool -list -v -keystore "$certStore" -storetype BKS -provider org.bouncycastle.jce.provider.BouncyCastleProvider -providerpath "libs/bcprov-jdk15on-148.jar" -storepass changeit -alias $certAliasNum >> $certStore.txt
