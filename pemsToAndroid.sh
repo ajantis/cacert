@@ -1,5 +1,6 @@
 #!/bin/bash
-#This script creates an Android compatibility certificate store from the current installed Debian certs in /etc/ssl/certs
+#
+#This script creates an Android compatibility (BouncyCastle / BKS) or standard java (JKS) certificate store from the provided PEM certificates
 #
 
 PROGNAME="${0##*/}"
@@ -20,7 +21,12 @@ certAliasNum=0
 
 for file in `ls $pemPath` ; do
 	certAliasNum=$((certAliasNum+1))
-	keytool -importcert -v -trustcacerts -file "$file" -alias $certAliasNum -keystore "$certStore" -provider org.bouncycastle.jce.provider.BouncyCastleProvider -providerpath "libs/bcprov-jdk16-145.jar" -storetype BKS -storepass changeit -noprompt
-	keytool -list -v -keystore "$certStore" -storetype BKS -provider org.bouncycastle.jce.provider.BouncyCastleProvider -providerpath "libs/bcprov-jdk15on-148.jar" -storepass changeit -alias $certAliasNum >> $certStore.txt
+	
+	if [[ "$certStore" == *.bks ]]; then
+	    # BouncyCastle format for KeyStore is used. 
+	    # (Otherwise JKS by default)
+	    additionalOpts="-provider org.bouncycastle.jce.provider.BouncyCastleProvider -providerpath "libs/bcprov-jdk16-145.jar" -storetype BKS"
+	fi
+	
+	keytool -importcert -v -trustcacerts -file "$file" -alias $certAliasNum -keystore "$certStore" -storepass changeit -noprompt $additionalOpts
 done
-
